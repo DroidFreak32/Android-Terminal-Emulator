@@ -32,12 +32,14 @@
 
     <HorizontalScrollView
         android:id="@+id/view_function_bar"
+        android:background="@android:color/black"
         android:visibility="visible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
         <TableLayout
             android:id="@+id/view_function_bar_keys"
+            android:background="@color/primary_dark"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
 
@@ -48,21 +50,25 @@
             <!-- ROW 1 -->
             <Button
                 android:id="@+id/button_esc"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
                 android:minWidth="60sp"
                 android:text="Esc"/>
+
             <Button
                 android:id="@+id/button_vim_paste"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
                 android:minWidth="60sp"
+                android:background="@color/primary"
                 android:gravity="center"
-                android:drawableLeft="@drawable/ic_content_paste_white_24dp"/>
+                android:drawableLeft="@drawable/ic_content_paste_white_24dp" />
             <Button
                 android:id="@+id/button_slash"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -70,6 +76,7 @@
                 android:text="/"/>
             <Button
                 android:id="@+id/button_home"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -77,6 +84,7 @@
                 android:text="HOME" />
             <Button
                 android:id="@+id/button_up"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -84,6 +92,7 @@
                 android:text="▲" />
             <Button
                 android:id="@+id/button_end"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -91,6 +100,7 @@
                 android:text="END" />
             <Button
                 android:id="@+id/button_pipe"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -98,6 +108,7 @@
                 android:text="|"/>
             <Button
                 android:id="@+id/button_minus"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -105,6 +116,7 @@
                 android:text="-"/>
             <Button
                 android:id="@+id/button_asterisk"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -112,6 +124,7 @@
                 android:text="*"/>
             <Button
                 android:id="@+id/button_backspace"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -126,6 +139,7 @@
             android:layout_height="wrap_content" >
             <Button
                 android:id="@+id/button_tab"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -133,6 +147,7 @@
                 android:text="Tab"/>
             <Button
                 android:id="@+id/button_ctrl"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -140,6 +155,7 @@
                 android:text="Ctrl"/>
             <Button
                 android:id="@+id/button_alt"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -148,6 +164,7 @@
 
             <Button
                 android:id="@+id/button_left"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -155,6 +172,7 @@
                 android:text="◀"/>
             <Button
                 android:id="@+id/button_down"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -162,6 +180,7 @@
                 android:text="▼"/>
             <Button
                 android:id="@+id/button_right"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -169,6 +188,7 @@
                 android:text="▶"/>
             <Button
                 android:id="@+id/button_enter"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -176,6 +196,7 @@
                 android:text="⏎"/>
             <Button
                 android:id="@+id/button_i"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -183,6 +204,7 @@
                 android:text="i"/>
             <Button
                 android:id="@+id/button_colon"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -190,6 +212,7 @@
                 android:text=":"/>
             <Button
                 android:id="@+id/button_equal"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -197,6 +220,7 @@
                 android:text="="/>
             <Button
                 android:id="@+id/button_vim_yank"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -204,6 +228,7 @@
                 android:text="&quot;*yy"/>
             <Button
                 android:id="@+id/button_menu_plus"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -211,6 +236,7 @@
                 android:text="[＋]"/>
             <Button
                 android:id="@+id/button_menu_minus"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -218,6 +244,7 @@
                 android:text="[－]"/>
             <Button
                 android:id="@+id/button_menu_x"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -225,6 +252,7 @@
                 android:text="[×]"/>
             <Button
                 android:id="@+id/button_menu_user"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -232,6 +260,7 @@
                 android:text="[？]"/>
             <Button
                 android:id="@+id/button_menu_quit"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -239,6 +268,7 @@
                 android:text="[Q]"/>
             <Button
                 android:id="@+id/button_softkeyboard"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -246,6 +276,7 @@
                 android:text="◇"/>
             <Button
                 android:id="@+id/button_menu"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
@@ -253,6 +284,7 @@
                 android:text="≡"/>
             <Button
                 android:id="@+id/button_menu_hide"
+                android:background="@color/primary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:minHeight="35sp"
