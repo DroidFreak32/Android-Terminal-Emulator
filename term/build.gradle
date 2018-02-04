@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.1'
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId 'com.offsec.nhterm'
         minSdkVersion 14
@@ -45,4 +45,5 @@ dependencies {
     implementation project(':emulatorview')
     implementation project(':libtermexec')
     implementation "com.android.support:support-v4:+"
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
 }
