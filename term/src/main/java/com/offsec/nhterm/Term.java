@@ -198,7 +198,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
             Log.d("mPendingPathBroadcasts","Tamano = " + mTermService.getSessions().size());
             Log.d("mPendingPathBroadcasts","Tamano = " + oldLength);
             TextView label = new TextView(Term.this);
-            @SuppressLint("StringFormatInvalid") String title = getSessionTitle(position, getString(R.string.window_title, position + 1));
+            @SuppressLint({"StringFormatInvalid", "LocalSuppress"}) String title = getSessionTitle(position, getString(R.string.window_title, position + 1));
             label.setText(title);
             if (AndroidCompat.SDK >= 13) {
                 label.setTextAppearance(Term.this, TextAppearance_Holo_Widget_ActionBar_Title);
@@ -1520,6 +1520,8 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         findViewById(R.id.button_ctrl ).setOnClickListener(this);
         findViewById(R.id.button_alt ).setOnClickListener(this);
         findViewById(R.id.button_tab  ).setOnClickListener(this);
+        findViewById(R.id.button_home   ).setOnClickListener(this);
+        findViewById(R.id.button_end   ).setOnClickListener(this);
         findViewById(R.id.button_up   ).setOnClickListener(this);
         findViewById(R.id.button_down ).setOnClickListener(this);
         findViewById(R.id.button_left ).setOnClickListener(this);
@@ -1557,6 +1559,11 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         setFunctionBarButton(R.id.button_alt, visibility);
         visibility = mPrefs.getBoolean("functionbar_tab", true) ? View.VISIBLE : View.GONE;
         setFunctionBarButton(R.id.button_tab, visibility);
+
+        visibility = mPrefs.getBoolean("functionbar_home", true) ? View.VISIBLE : View.GONE;
+        setFunctionBarButton(R.id.button_home, visibility);
+        visibility = mPrefs.getBoolean("functionbar_end", true) ? View.VISIBLE : View.GONE;
+        setFunctionBarButton(R.id.button_end, visibility);
 
         visibility = mPrefs.getBoolean("functionbar_up", true) ? View.VISIBLE : View.GONE;
         setFunctionBarButton(R.id.button_up, visibility);
@@ -1644,8 +1651,14 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
             case R.id.button_tab:
                 doSendActionBarKey(view, KeycodeConstants.KEYCODE_TAB);
                 break;
+            case R.id.button_home:
+                doSendActionBarKey(view, KeycodeConstants.KEYCODE_MOVE_HOME);
+                break;
             case R.id.button_up:
                 doSendActionBarKey(view, KeycodeConstants.KEYCODE_DPAD_UP);
+                break;
+            case R.id.button_end:
+                doSendActionBarKey(view, KeycodeConstants.KEYCODE_MOVE_END);
                 break;
             case R.id.button_down:
                 doSendActionBarKey(view, KeycodeConstants.KEYCODE_DPAD_DOWN);

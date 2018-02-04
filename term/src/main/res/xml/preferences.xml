@@ -103,6 +103,14 @@
                 android:defaultValue="true"
                 android:title="Tab"/>
             <CheckBoxPreference
+                android:key="functionbar_home"
+                android:defaultValue="true"
+                android:title="HOME"/>
+            <CheckBoxPreference
+                android:key="functionbar_end"
+                android:defaultValue="true"
+                android:title="END"/>
+            <CheckBoxPreference
                 android:key="functionbar_up"
                 android:defaultValue="true"
                 android:title="▲"/>
