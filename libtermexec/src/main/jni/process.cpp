@@ -28,7 +28,13 @@
 #include <signal.h>
 #include <string.h>
 
-typedef unsigned short char16_t;
+/*
+ * Since C++11 char16_t and char32_t are fundamental types.
+ * REFERENCE: https://en.cppreference.com/w/cpp/keyword/char16_t
+ * TODO: Find out if casting using reinterpret_cast<const char16_t *>() is a good workaround.
+ * TODO: Else uncomment the typedef & replace char16_t with char16_t_mod everywhere.
+ */
+//typedef unsigned short char16_t;
 
 class String8 {
 public:
@@ -202,7 +208,7 @@ JNIEXPORT jint JNICALL Java_com_offsec_nhterm_TermExec_createSubprocessInternal(
     const jchar* str = cmd ? env->GetStringCritical(cmd, 0) : 0;
     String8 cmd_8;
     if (str) {
-        cmd_8.set(str, env->GetStringLength(cmd));
+        cmd_8.set(reinterpret_cast<const char16_t *>(str), env->GetStringLength(cmd));
         env->ReleaseStringCritical(cmd, str);
     }
 
@@ -222,7 +228,7 @@ JNIEXPORT jint JNICALL Java_com_offsec_nhterm_TermExec_createSubprocessInternal(
                 throwOutOfMemoryError(env, "Couldn't get argument from array");
                 return 0;
             }
-            tmp_8.set(str, env->GetStringLength(arg));
+            tmp_8.set(reinterpret_cast<const char16_t *>(str), env->GetStringLength(arg));
             env->ReleaseStringCritical(arg, str);
             argv[i] = strdup(tmp_8.string());
         }
@@ -244,7 +250,7 @@ JNIEXPORT jint JNICALL Java_com_offsec_nhterm_TermExec_createSubprocessInternal(
                 throwOutOfMemoryError(env, "Couldn't get env var from array");
                 return 0;
             }
-            tmp_8.set(str, env->GetStringLength(var));
+            tmp_8.set(reinterpret_cast<const char16_t *>(str), env->GetStringLength(var));
             env->ReleaseStringCritical(var, str);
             envp[i] = strdup(tmp_8.string());
         }
