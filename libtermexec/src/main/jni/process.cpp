@@ -208,7 +208,8 @@ JNIEXPORT jint JNICALL Java_com_offsec_nhterm_TermExec_createSubprocessInternal(
     const jchar* str = cmd ? env->GetStringCritical(cmd, 0) : 0;
     String8 cmd_8;
     if (str) {
-        cmd_8.set(reinterpret_cast<const char16_t *>(str), env->GetStringLength(cmd));
+        cmd_8.set(reinterpret_cast<const char16_t *>(str),
+                  static_cast<size_t>(env->GetStringLength(cmd)));
         env->ReleaseStringCritical(cmd, str);
     }
 
@@ -228,7 +229,8 @@ JNIEXPORT jint JNICALL Java_com_offsec_nhterm_TermExec_createSubprocessInternal(
                 throwOutOfMemoryError(env, "Couldn't get argument from array");
                 return 0;
             }
-            tmp_8.set(reinterpret_cast<const char16_t *>(str), env->GetStringLength(arg));
+            tmp_8.set(reinterpret_cast<const char16_t *>(str),
+                      static_cast<size_t>(env->GetStringLength(arg)));
             env->ReleaseStringCritical(arg, str);
             argv[i] = strdup(tmp_8.string());
         }
@@ -250,7 +252,8 @@ JNIEXPORT jint JNICALL Java_com_offsec_nhterm_TermExec_createSubprocessInternal(
                 throwOutOfMemoryError(env, "Couldn't get env var from array");
                 return 0;
             }
-            tmp_8.set(reinterpret_cast<const char16_t *>(str), env->GetStringLength(var));
+            tmp_8.set(reinterpret_cast<const char16_t *>(str),
+                      static_cast<size_t>(env->GetStringLength(var)));
             env->ReleaseStringCritical(var, str);
             envp[i] = strdup(tmp_8.string());
         }
