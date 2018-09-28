@@ -197,6 +197,14 @@
                 android:minWidth="60sp"
                 android:text="▶"/>
             <Button
+                android:id="@+id/button_pagedown"
+                android:background="@color/primary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="35sp"
+                android:minWidth="60sp"
+                android:text="PGDN" />
+            <Button
                 android:id="@+id/button_enter"
                 android:background="@color/primary"
                 android:layout_width="wrap_content"
