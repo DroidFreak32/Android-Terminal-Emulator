@@ -1523,11 +1523,12 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         findViewById(R.id.button_tab  ).setOnClickListener(this);
         findViewById(R.id.button_home   ).setOnClickListener(this);
         findViewById(R.id.button_end   ).setOnClickListener(this);
+        findViewById(R.id.button_pageup ).setOnClickListener(this);
+        findViewById(R.id.button_pagedown ).setOnClickListener(this);
         findViewById(R.id.button_up   ).setOnClickListener(this);
         findViewById(R.id.button_down ).setOnClickListener(this);
         findViewById(R.id.button_left ).setOnClickListener(this);
         findViewById(R.id.button_right).setOnClickListener(this);
-        findViewById(R.id.button_pageup ).setOnClickListener(this);
         findViewById(R.id.button_backspace).setOnClickListener(this);
         findViewById(R.id.button_enter).setOnClickListener(this);
         findViewById(R.id.button_i).setOnClickListener(this);
@@ -1568,6 +1569,8 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         setFunctionBarButton(R.id.button_end, visibility);
         visibility = mPrefs.getBoolean("functionbar_pageup", true) ? View.VISIBLE : View.GONE;
         setFunctionBarButton(R.id.button_pageup, visibility);
+        visibility = mPrefs.getBoolean("functionbar_pagedown", true) ? View.VISIBLE : View.GONE;
+        setFunctionBarButton(R.id.button_pagedown, visibility);
 
         visibility = mPrefs.getBoolean("functionbar_up", true) ? View.VISIBLE : View.GONE;
         setFunctionBarButton(R.id.button_up, visibility);
@@ -1658,14 +1661,17 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
             case R.id.button_home:
                 doSendActionBarKey(view, KeycodeConstants.KEYCODE_MOVE_HOME);
                 break;
+            case R.id.button_end:
+                doSendActionBarKey(view, KeycodeConstants.KEYCODE_MOVE_END);
+                break;
             case R.id.button_pageup:
                 doSendActionBarKey(view, KeycodeConstants.KEYCODE_PAGE_UP);
                 break;
+            case R.id.button_pagedown:
+                doSendActionBarKey(view, KeycodeConstants.KEYCODE_PAGE_DOWN);
+                break;
             case R.id.button_up:
                 doSendActionBarKey(view, KeycodeConstants.KEYCODE_DPAD_UP);
-                break;
-            case R.id.button_end:
-                doSendActionBarKey(view, KeycodeConstants.KEYCODE_MOVE_END);
                 break;
             case R.id.button_down:
                 doSendActionBarKey(view, KeycodeConstants.KEYCODE_DPAD_DOWN);
