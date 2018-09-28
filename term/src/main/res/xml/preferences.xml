@@ -170,6 +170,14 @@
                 android:key="functionbar_vim_yank"
                 android:defaultValue="false"
                 android:title="&quot;*yy"/>
+            <CheckBoxPreference
+                android:key="functionbar_pageup"
+                android:defaultValue="true"
+                android:title="PGUP"/>
+            <CheckBoxPreference
+                android:key="functionbar_pagedown"
+                android:defaultValue="true"
+                android:title="PGDN"/>
             <!--
                             <CheckBoxPreference
                                     android:key="functionbar_menu_plus"
