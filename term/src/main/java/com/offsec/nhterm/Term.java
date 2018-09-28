@@ -154,8 +154,6 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
             }
         }
     };
-    // Available on API 12 and later
-    private static final int FLAG_INCLUDE_STOPPED_PACKAGES = 0x20;
 
     private TermService mTermService;
     private ServiceConnection mTSConnection = new ServiceConnection() {
@@ -376,7 +374,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
 
         Intent broadcast = new Intent(ACTION_PATH_BROADCAST);
         if (AndroidCompat.SDK >= 12) {
-            broadcast.addFlags(FLAG_INCLUDE_STOPPED_PACKAGES);
+            broadcast.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
         }
         mPendingPathBroadcasts++;
         sendOrderedBroadcast(broadcast, PERMISSION_PATH_BROADCAST, mPathReceiver, null, RESULT_OK, null, null);
@@ -407,11 +405,11 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         }
 
         setContentView(R.layout.term_activity);
-        mViewFlipper = (TermViewFlipper) findViewById(VIEW_FLIPPER);
+        mViewFlipper = findViewById(VIEW_FLIPPER);
         setFunctionKeyListener();
 
         PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
-        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TermDebug.LOG_TAG);
+        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getPackageName() + TermDebug.LOG_TAG);
         WifiManager wm = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         int wifiLockMode = WifiManager.WIFI_MODE_FULL;
         if (AndroidCompat.SDK >= 12) {
@@ -716,7 +714,9 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
             @Override
             public void run() {
                 InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(token, 0);
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(token, 0);
+                }
             }
         }.start();
     }
@@ -817,11 +817,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
 
         builder1.setPositiveButton(
                 "Ok",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
+                (dialog, id) -> dialog.cancel());
 
         AlertDialog alert11 = builder1.create();
         alert11.show();
@@ -839,25 +835,23 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         //alertDialogBuilder.setCancelable(false);
         alertDialogBuilder.setTitle("Select shell:");
         alertDialogBuilder.setNegativeButton("Android",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Log.d("CANCELED", "CANCELED");
-                        TermSession session = null;
-                        try {
-                            session = createTermSession(getBaseContext(), settings, "", ShellType.ANDROID_SHELL);
-                            session.setFinishCallback(mTermService);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        mTermSessions.add(session);
-                        if(from == "doCreateNewWindow"){
-                            end_doCreateNewWindow(session);
-                        }
-                        if(from ==  "populateViewFlipper"){
-                            end_populateViewFlipper();
-                        }
-
+                (dialog, id) -> {
+                    Log.d("CANCELED", "CANCELED");
+                    TermSession session = null;
+                    try {
+                        session = createTermSession(getBaseContext(), settings, "", ShellType.ANDROID_SHELL);
+                        session.setFinishCallback(mTermService);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+                    mTermSessions.add(session);
+                    if(from == "doCreateNewWindow"){
+                        end_doCreateNewWindow(session);
+                    }
+                    if(from ==  "populateViewFlipper"){
+                        end_populateViewFlipper();
+                    }
+
                 })
                 .setPositiveButton("AndroidSu",
                         new DialogInterface.OnClickListener() {
@@ -890,51 +884,46 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
                             }
                         })
                 .setNeutralButton("Kali",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Log.d("Kali", "Kali");
+                        (dialog, id) -> {
+                            Log.d("Kali", "Kali");
 
-                                if(CheckRoot.isDeviceRooted()){
-                                    Log.d("isDeviceRooted","Device is rooted!");
+                            if(CheckRoot.isDeviceRooted()){
+                                Log.d("isDeviceRooted","Device is rooted!");
 
-                                String chroot_dir = "/data/local/nhsystem/kali-armhf"; // Not sure if I can wildcard this
+                            String chroot_dir = "/data/local/nhsystem/kali-armhf"; // Not sure if I can wildcard this
 
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                        if (!dir_exists(chroot_dir)){
-                                            NotFound(chroot_dir);
-                                        } else {
-                                            TermSession session = null;
-                                            try {
-                                                session = createTermSession(getBaseContext(), settings, "", ShellType.KALI_LOGIN_SHELL);
-                                                session.setFinishCallback(mTermService);
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-                                            mTermSessions.add(session);
-                                            if (from.equals("doCreateNewWindow")) {
-                                                end_doCreateNewWindow(session);
-                                            }
-                                            if (from.equals("populateViewFlipper")) {
-                                                end_populateViewFlipper();
-                                            }
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                    if (!dir_exists(chroot_dir)){
+                                        NotFound(chroot_dir);
+                                    } else {
+                                        TermSession session = null;
+                                        try {
+                                            session = createTermSession(getBaseContext(), settings, "", ShellType.KALI_LOGIN_SHELL);
+                                            session.setFinishCallback(mTermService);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        mTermSessions.add(session);
+                                        if (from.equals("doCreateNewWindow")) {
+                                            end_doCreateNewWindow(session);
+                                        }
+                                        if (from.equals("populateViewFlipper")) {
+                                            end_populateViewFlipper();
                                         }
                                     }
-                                } else {
-                                    // ALERT! WHY YOU NO ROOT!
-                                    Log.d("isDeviceRooted","Device is not rooted!");
-                                    show_nosupersu();
                                 }
+                            } else {
+                                // ALERT! WHY YOU NO ROOT!
+                                Log.d("isDeviceRooted","Device is not rooted!");
+                                show_nosupersu();
                             }
                         });
 
         alertDialog = alertDialogBuilder.create();
-        alertDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                Log.d("Oncancel", "size: " + mWinListAdapter.getCount());
-                if(mWinListAdapter.getCount() == 0){
-                    finish();
-                }
+        alertDialog.setOnCancelListener(dialog -> {
+            Log.d("Oncancel", "size: " + mWinListAdapter.getCount());
+            if(mWinListAdapter.getCount() == 0){
+                finish();
             }
         });
         alertDialog.show();
@@ -1006,12 +995,10 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         alertDialogBuilder.setTitle("Error");
         alertDialogBuilder.setMessage("Could not find:\n" + text + ":\n" + msg );
         alertDialogBuilder.setNegativeButton("OK!",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                            // close
-                            finish();
-                            System.exit(0);
-                        }
+                (dialog, id) -> {
+                        // close
+                        finish();
+                        System.exit(0);
                     });
         // create alert dialog
         AlertDialog alertDialog = alertDialogBuilder.create();
@@ -1028,7 +1015,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
     }
 
     private static boolean mVimApp = false;
-    private boolean doSendActionBarKey(EmulatorView view, int key) {
+    private void doSendActionBarKey(EmulatorView view, int key) {
         if (key == 999) {
             // do nothing
         } else if (key == 1002) {
@@ -1047,7 +1034,9 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         } else if (key == 1252) {
             InputMethodManager imm = (InputMethodManager)
                     getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showInputMethodPicker();
+            if (imm != null) {
+                imm.showInputMethodPicker();
+            }
         } else if (key == 1253) {
             sendKeyStrings(":confirm qa\r", true);
         } else if (key == 1254) {
@@ -1066,7 +1055,6 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
             event = new KeyEvent(KeyEvent.ACTION_UP, key);
             dispatchKeyEvent(event);
         }
-        return true;
     }
 
     private void sendKeyStrings(String str, boolean esc) {
@@ -1093,16 +1081,10 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         final AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setIcon(android.R.drawable.ic_dialog_alert);
         b.setMessage(R.string.confirm_window_close_message);
-        final Runnable closeWindow = new Runnable() {
-            public void run() {
-                doCloseWindow();
-            }
-        };
-        b.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-           public void onClick(DialogInterface dialog, int id) {
-               dialog.dismiss();
-               mHandler.post(closeWindow);
-           }
+        final Runnable closeWindow = () -> doCloseWindow();
+        b.setPositiveButton(android.R.string.yes, (dialog, id) -> {
+            dialog.dismiss();
+            mHandler.post(closeWindow);
         });
         b.setNegativeButton(android.R.string.no, null);
         b.show();
@@ -1373,7 +1355,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
     private void doCopyAll() {
         ClipboardManagerCompat clip = ClipboardManagerCompatFactory
                 .getManager(getApplicationContext());
-        clip.setText(getCurrentTermSession().getTranscriptText().trim());
+        clip.setText(Objects.requireNonNull(getCurrentTermSession()).getTranscriptText().trim());
     }
 
     private void doPaste() {
@@ -1383,7 +1365,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         ClipboardManagerCompat clip = ClipboardManagerCompatFactory
                 .getManager(getApplicationContext());
         CharSequence paste = clip.getText();
-        getCurrentTermSession().write(paste.toString());
+        Objects.requireNonNull(getCurrentTermSession()).write(paste.toString());
     }
 
     private void doSendControlKey() {
@@ -1428,7 +1410,9 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
     private void doToggleSoftKeyboard() {
         InputMethodManager imm = (InputMethodManager)
             getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+        if (imm != null) {
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+        }
 
     }
 
@@ -1436,7 +1420,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         if (mWakeLock.isHeld()) {
             mWakeLock.release();
         } else {
-            mWakeLock.acquire();
+            mWakeLock.acquire(30*60*1000L /*30 minutes*/);
         }
         ActivityCompat.invalidateOptionsMenu(this);
     }
@@ -1632,7 +1616,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
 
     @SuppressLint("NewApi")
     private void setFunctionBarButton(int id, int visibility) {
-        Button button = (Button)findViewById(id);
+        Button button = findViewById(id);
         button.setVisibility(visibility);
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
