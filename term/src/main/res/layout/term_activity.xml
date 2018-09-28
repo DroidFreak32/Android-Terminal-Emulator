@@ -101,6 +101,14 @@
                 android:minWidth="60sp"
                 android:text="END" />
             <Button
+                android:id="@+id/button_pageup"
+                android:background="@color/primary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="35sp"
+                android:minWidth="60sp"
+                android:text="PGUP" />
+            <Button
                 android:id="@+id/button_pipe"
                 android:background="@color/primary"
                 android:layout_width="wrap_content"
