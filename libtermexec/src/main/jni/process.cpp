@@ -20,20 +20,26 @@
 #include <sys/ioctl.h>
 #include <sys/wait.h>
 #include <dirent.h>
-#include <errno.h>
+#include <cerrno>
 #include <fcntl.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <unistd.h>
 #include <termios.h>
-#include <signal.h>
-#include <string.h>
+#include <csignal>
+#include <cstring>
 
-typedef unsigned short uint_least16_t;
+/*
+ * Since C++11 char16_t and char32_t are fundamental types.
+ * REFERENCE: https://en.cppreference.com/w/cpp/keyword/char16_t
+ * TODO: Find out if casting using reinterpret_cast<const char16_t *>() is a good workaround.
+ * TODO: Else uncomment the typedef & replace char16_t with char16_t_mod everywhere.
+ */
+//typedef unsigned short char16_t;
 
 class String8 {
 public:
     String8() {
-        mString = 0;
+        mString = nullptr;
     }
 
     ~String8() {
@@ -42,7 +48,7 @@ public:
         }
     }
 
-    void set(const uint_least16_t* o, size_t numChars) {
+    void set(const char16_t* o, size_t numChars) {
         if (mString) {
             free(mString);
         }
@@ -75,7 +81,7 @@ static int throwOutOfMemoryError(JNIEnv *env, const char *message)
 static int throwIOException(JNIEnv *env, int errnum, const char *message)
 {
     __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, "%s errno %s(%d)",
-        message, strerror(errno), errno);
+                        message, strerror(errno), errno);
 
     if (errnum != 0) {
         const char *s = strerror(errnum);
@@ -96,16 +102,16 @@ static void closeNonstandardFileDescriptors() {
     // the form "properties_fd,sizeOfSharedMemory"
     int properties_fd = -1;
     char* properties_fd_string = getenv("ANDROID_PROPERTY_WORKSPACE");
-    if (properties_fd_string != NULL) {
+    if (properties_fd_string != nullptr) {
         properties_fd = atoi(properties_fd_string);
     }
     DIR *dir = opendir("/proc/self/fd");
-    if(dir != NULL) {
+    if(dir != nullptr) {
         int dir_fd = dirfd(dir);
 
         while(true) {
             struct dirent *entry = readdir(dir);
-            if(entry == NULL) {
+            if(entry == nullptr) {
                 break;
             }
 
@@ -154,7 +160,7 @@ static int create_subprocess(JNIEnv *env, const char *cmd, char *const argv[], c
 
         setsid();
 
-        pts = open(devname, O_RDWR);
+        pts = open(devname, O_RDWR | O_CLOEXEC);
         if(pts < 0) exit(-1);
 
         ioctl(pts, TIOCSCTTY, 0);
@@ -180,8 +186,8 @@ static int create_subprocess(JNIEnv *env, const char *cmd, char *const argv[], c
 
 extern "C" {
 
-JNIEXPORT void JNICALL Java_com_offsec_nhterm_TermExec_sendSignal(JNIEnv *env, jobject clazz,
-    jint procId, jint signal)
+JNIEXPORT void JNICALL Java_com_offsec_nhterm_TermExec_sendSignal(JNIEnv *env, jclass clazz,
+                                                                  jint procId, jint signal)
 {
     kill(procId, signal);
 }
@@ -197,17 +203,18 @@ JNIEXPORT jint JNICALL Java_com_offsec_nhterm_TermExec_waitFor(JNIEnv *env, jcla
 }
 
 JNIEXPORT jint JNICALL Java_com_offsec_nhterm_TermExec_createSubprocessInternal(JNIEnv *env, jclass clazz,
-    jstring cmd, jobjectArray args, jobjectArray envVars, jint masterFd)
+                                                                                jstring cmd, jobjectArray args, jobjectArray envVars, jint masterFd)
 {
-    const jchar* str = cmd ? env->GetStringCritical(cmd, 0) : 0;
+    const jchar* str = cmd ? env->GetStringCritical(cmd, nullptr) : nullptr;
     String8 cmd_8;
     if (str) {
-        cmd_8.set(str, env->GetStringLength(cmd));
+        cmd_8.set(reinterpret_cast<const char16_t *>(str),
+                  static_cast<size_t>(env->GetStringLength(cmd)));
         env->ReleaseStringCritical(cmd, str);
     }
 
     jsize size = args ? env->GetArrayLength(args) : 0;
-    char **argv = NULL;
+    char **argv = nullptr;
     String8 tmp_8;
     if (size > 0) {
         argv = (char **)malloc((size+1)*sizeof(char *));
@@ -216,21 +223,22 @@ JNIEXPORT jint JNICALL Java_com_offsec_nhterm_TermExec_createSubprocessInternal(
             return 0;
         }
         for (int i = 0; i < size; ++i) {
-            jstring arg = reinterpret_cast<jstring>(env->GetObjectArrayElement(args, i));
-            str = env->GetStringCritical(arg, 0);
+            auto arg = reinterpret_cast<jstring>(env->GetObjectArrayElement(args, i));
+            str = env->GetStringCritical(arg, nullptr);
             if (!str) {
                 throwOutOfMemoryError(env, "Couldn't get argument from array");
                 return 0;
             }
-            tmp_8.set(str, env->GetStringLength(arg));
+            tmp_8.set(reinterpret_cast<const char16_t *>(str),
+                      static_cast<size_t>(env->GetStringLength(arg)));
             env->ReleaseStringCritical(arg, str);
             argv[i] = strdup(tmp_8.string());
         }
-        argv[size] = NULL;
+        argv[size] = nullptr;
     }
 
     size = envVars ? env->GetArrayLength(envVars) : 0;
-    char **envp = NULL;
+    char **envp = nullptr;
     if (size > 0) {
         envp = (char **)malloc((size+1)*sizeof(char *));
         if (!envp) {
@@ -238,17 +246,18 @@ JNIEXPORT jint JNICALL Java_com_offsec_nhterm_TermExec_createSubprocessInternal(
             return 0;
         }
         for (int i = 0; i < size; ++i) {
-            jstring var = reinterpret_cast<jstring>(env->GetObjectArrayElement(envVars, i));
-            str = env->GetStringCritical(var, 0);
+            auto var = reinterpret_cast<jstring>(env->GetObjectArrayElement(envVars, i));
+            str = env->GetStringCritical(var, nullptr);
             if (!str) {
                 throwOutOfMemoryError(env, "Couldn't get env var from array");
                 return 0;
             }
-            tmp_8.set(str, env->GetStringLength(var));
+            tmp_8.set(reinterpret_cast<const char16_t *>(str),
+                      static_cast<size_t>(env->GetStringLength(var)));
             env->ReleaseStringCritical(var, str);
             envp[i] = strdup(tmp_8.string());
         }
-        envp[size] = NULL;
+        envp[size] = nullptr;
     }
 
     int ptm = create_subprocess(env, cmd_8.string(), argv, envp, masterFd);
