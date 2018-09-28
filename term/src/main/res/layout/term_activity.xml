@@ -59,13 +59,15 @@
 
             <Button
                 android:id="@+id/button_vim_paste"
-                android:layout_width="wrap_content"
+                android:background="@color/primary"
+                android:drawableRight="@drawable/ic_content_paste_white_24dp"
+                android:drawableEnd="@drawable/ic_content_paste_white_24dp"
+                android:gravity="center"
                 android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
                 android:minHeight="35sp"
                 android:minWidth="60sp"
-                android:background="@color/primary"
-                android:gravity="center"
-                android:drawableLeft="@drawable/ic_content_paste_white_24dp" />
+                android:text="VIM"/>
             <Button
                 android:id="@+id/button_slash"
                 android:background="@color/primary"
