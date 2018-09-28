@@ -16,8 +16,6 @@
 
 package com.offsec.nhterm.emulatorview;
 
-import com.offsec.nhterm.emulatorview.compat.AndroidCompat;
-
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,21 +27,23 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.text.TextPaint;
 
+import com.offsec.nhterm.emulatorview.compat.AndroidCompat;
+
 class Bitmap4x8FontRenderer extends BaseTextRenderer {
     private final static int kCharacterWidth = 4;
     private final static int kCharacterHeight = 8;
+    private static final float BYTE_SCALE = 1.0f / 255.0f;
     private Bitmap mFont;
     private int mCurrentForeColor;
     private int mCurrentBackColor;
     private float[] mColorMatrix;
     private Paint mPaint;
-    private static final float BYTE_SCALE = 1.0f / 255.0f;
 
     public Bitmap4x8FontRenderer(Resources resources, ColorScheme scheme) {
         super(scheme);
         int fontResource = AndroidCompat.SDK <= 3 ? R.drawable.atari_small
                 : R.drawable.atari_small_nodpi;
-        mFont = BitmapFactory.decodeResource(resources,fontResource);
+        mFont = BitmapFactory.decodeResource(resources, fontResource);
         mPaint = new Paint();
         mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
     }
@@ -53,7 +53,7 @@ class Bitmap4x8FontRenderer extends BaseTextRenderer {
     }
 
     public float getMeasureText(String text) {
-        return kCharacterWidth*text.length();
+        return kCharacterWidth * text.length();
     }
 
     public void setImePaint(TextPaint paint) {
@@ -109,7 +109,7 @@ class Bitmap4x8FontRenderer extends BaseTextRenderer {
 
         // The cursor is too small to show the cursor mode.
         if (lineOffset <= cursorOffset && cursorOffset < (lineOffset + count)) {
-            drawTextRunHelper(canvas, x, y, cursorOffset, text, cursorOffset-lineOffset, 1,
+            drawTextRunHelper(canvas, x, y, cursorOffset, text, cursorOffset - lineOffset, 1,
                     TextStyle.ciCursorForeground, TextStyle.ciCursorBackground);
         }
     }

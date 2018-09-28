@@ -1,12 +1,19 @@
 package com.offsec.nhterm;
 
 import android.annotation.TargetApi;
-import android.os.*;
+import android.os.Build;
+import android.os.Looper;
+import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
+
 import java.io.FileDescriptor;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Utility methods for creating and managing a subprocess. This class differs from
@@ -17,14 +24,13 @@ import java.util.*;
  * to attached shell, even if said shell runs under a different user ID.
  */
 public class TermExec {
+    public static final String SERVICE_ACTION_V1 = "com.offsec.nhterm.action.START_TERM.v1";
+    private static Field descriptorField;
+
     // Warning: bump the library revision, when an incompatible change happens
     static {
         System.loadLibrary("jackpal-termexec2");
     }
-
-    public static final String SERVICE_ACTION_V1 = "com.offsec.nhterm.action.START_TERM.v1";
-
-    private static Field descriptorField;
 
     private final List<String> command;
     private final Map<String, String> environment;
@@ -38,15 +44,55 @@ public class TermExec {
         this.environment = new Hashtable<>(System.getenv());
     }
 
-    public @NonNull List<String> command() {
+    /**
+     * Causes the calling thread to wait for the process associated with the
+     * receiver to finish executing.
+     *
+     * @return The exit value of the Process being waited on
+     */
+    public static native int waitFor(int processId);
+
+    /**
+     * Send signal via the "kill" system call. Android {@link android.os.Process#sendSignal} does not
+     * allow negative numbers (denoting process groups) to be used.
+     */
+    public static native void sendSignal(int processId, int signal);
+
+    static int createSubprocess(ParcelFileDescriptor masterFd, String cmd, String[] args, String[] envVars) throws IOException {
+        final int integerFd;
+
+        if (Build.VERSION.SDK_INT >= 12)
+            integerFd = FdHelperHoneycomb.getFd(masterFd);
+        else {
+            try {
+                if (descriptorField == null) {
+                    descriptorField = FileDescriptor.class.getDeclaredField("descriptor");
+                    descriptorField.setAccessible(true);
+                }
+
+                integerFd = descriptorField.getInt(masterFd.getFileDescriptor());
+            } catch (Exception e) {
+                throw new IOException("Unable to obtain file descriptor on this OS version: " + e.getMessage());
+            }
+        }
+
+        return createSubprocessInternal(cmd, args, envVars, integerFd);
+    }
+
+    private static native int createSubprocessInternal(String cmd, String[] args, String[] envVars, int masterFd);
+
+    public @NonNull
+    List<String> command() {
         return command;
     }
 
-    public @NonNull Map<String, String> environment() {
+    public @NonNull
+    Map<String, String> environment() {
         return environment;
     }
 
-    public @NonNull TermExec command(@NonNull String... command) {
+    public @NonNull
+    TermExec command(@NonNull String... command) {
         return command(new ArrayList<>(Arrays.asList(command)));
     }
 
@@ -84,44 +130,6 @@ public class TermExec {
 
         return createSubprocess(ptmxFd, cmd, cmdArray, envArray);
     }
-
-    /**
-     * Causes the calling thread to wait for the process associated with the
-     * receiver to finish executing.
-     *
-     * @return The exit value of the Process being waited on
-     */
-    public static native int waitFor(int processId);
-
-    /**
-     * Send signal via the "kill" system call. Android {@link android.os.Process#sendSignal} does not
-     * allow negative numbers (denoting process groups) to be used.
-     */
-    public static native void sendSignal(int processId, int signal);
-
-    static int createSubprocess(ParcelFileDescriptor masterFd, String cmd, String[] args, String[] envVars) throws IOException
-    {
-        final int integerFd;
-
-        if (Build.VERSION.SDK_INT >= 12)
-            integerFd = FdHelperHoneycomb.getFd(masterFd);
-        else {
-            try {
-                if (descriptorField == null) {
-                    descriptorField = FileDescriptor.class.getDeclaredField("descriptor");
-                    descriptorField.setAccessible(true);
-                }
-
-                integerFd = descriptorField.getInt(masterFd.getFileDescriptor());
-            } catch (Exception e) {
-                throw new IOException("Unable to obtain file descriptor on this OS version: " + e.getMessage());
-            }
-        }
-
-        return createSubprocessInternal(cmd, args, envVars, integerFd);
-    }
-
-    private static native int createSubprocessInternal(String cmd, String[] args, String[] envVars, int masterFd);
 }
 
 // prevents runtime errors on old API versions with ruthless verifier

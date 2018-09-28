@@ -16,42 +16,35 @@
 
 package com.offsec.nhterm;
 
-import java.io.*;
-import java.lang.reflect.Field;
-
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
-import com.offsec.nhterm.FdHelperHoneycomb;
 import com.offsec.nhterm.emulatorview.ColorScheme;
 import com.offsec.nhterm.emulatorview.TermSession;
 import com.offsec.nhterm.emulatorview.UpdateCallback;
-
 import com.offsec.nhterm.util.TermSettings;
+
+import java.io.FileDescriptor;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 
 /**
  * A terminal session, consisting of a TerminalEmulator, a TranscriptScreen,
  * and the I/O streams used to talk to the process.
  */
 class GenericTermSession extends TermSession {
-    //** Set to true to force into 80 x 24 for testing with vttest. */
-    private static final boolean VTTEST_MODE = false;
-
-    private static Field descriptorField;
-
-    private final long createdAt;
-
-    // A cookie which uniquely identifies this session.
-    private String mHandle;
-
-    final ParcelFileDescriptor mTermFd;
-
-    TermSettings mSettings;
-
     public static final int PROCESS_EXIT_FINISHES_SESSION = 0;
     public static final int PROCESS_EXIT_DISPLAYS_MESSAGE = 1;
-
+    //** Set to true to force into 80 x 24 for testing with vttest. */
+    private static final boolean VTTEST_MODE = false;
+    private static Field descriptorField;
+    final ParcelFileDescriptor mTermFd;
+    private final long createdAt;
+    TermSettings mSettings;
+    // A cookie which uniquely identifies this session.
+    private String mHandle;
     private String mProcessExitMessage;
 
     private UpdateCallback mUTF8ModeNotify = new UpdateCallback() {
@@ -68,6 +61,27 @@ class GenericTermSession extends TermSession {
         this.createdAt = System.currentTimeMillis();
 
         updatePrefs(settings);
+    }
+
+    private static void cacheDescField() throws NoSuchFieldException {
+        if (descriptorField != null)
+            return;
+        descriptorField = FileDescriptor.class.getDeclaredField("descriptor");
+        descriptorField.setAccessible(true);
+    }
+
+    private static int getIntFd(ParcelFileDescriptor parcelFd) throws IOException {
+        if (Build.VERSION.SDK_INT >= 12)
+            return FdHelperHoneycomb.getFd(parcelFd);
+        else {
+            try {
+                cacheDescField();
+
+                return descriptorField.getInt(parcelFd.getFileDescriptor());
+            } catch (Exception e) {
+                throw new IOException("Unable to obtain file descriptor on this OS version: " + e.getMessage());
+            }
+        }
     }
 
     public void updatePrefs(TermSettings settings) {
@@ -139,15 +153,19 @@ class GenericTermSession extends TermSession {
      * be returned instead.
      *
      * @param defaultTitle The default title to use if this session's title is
-     *     unset or an empty string.
+     *                     unset or an empty string.
      */
     public String getTitle(String defaultTitle) {
         String title = getTitle();
         if (title != null && title.length() > 0) {
-            return defaultTitle +" "+ title;
+            return defaultTitle + " " + title;
         } else {
             return defaultTitle + " No title";
         }
+    }
+
+    public String getHandle() {
+        return mHandle;
     }
 
     public void setHandle(String handle) {
@@ -155,10 +173,6 @@ class GenericTermSession extends TermSession {
             throw new IllegalStateException("Cannot change handle once set");
         }
         mHandle = handle;
-    }
-
-    public String getHandle() {
-        return mHandle;
     }
 
     @Override
@@ -209,26 +223,5 @@ class GenericTermSession extends TermSession {
      */
     boolean isFailFast() {
         return false;
-    }
-
-    private static void cacheDescField() throws NoSuchFieldException {
-        if (descriptorField != null)
-            return;
-        descriptorField = FileDescriptor.class.getDeclaredField("descriptor");
-        descriptorField.setAccessible(true);
-    }
-
-    private static int getIntFd(ParcelFileDescriptor parcelFd) throws IOException {
-        if (Build.VERSION.SDK_INT >= 12)
-            return FdHelperHoneycomb.getFd(parcelFd);
-        else {
-            try {
-                cacheDescField();
-
-                return descriptorField.getInt(parcelFd.getFileDescriptor());
-            } catch (Exception e) {
-                throw new IOException("Unable to obtain file descriptor on this OS version: " + e.getMessage());
-            }
-        }
     }
 }

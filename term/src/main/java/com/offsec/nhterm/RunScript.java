@@ -32,6 +32,7 @@ public final class RunScript extends RemoteInterface {
     private static final String EXTRA_WINDOW_HANDLE = "com.offsec.nhterm.window_handle";
     private static final String EXTRA_INITIAL_COMMAND = "com.offsec.nhterm.iInitialCommand";
     private static final String ANDROID_SHELL = "/system/bin/sh -";
+
     @Override
     protected void handleIntent() {
         TermService service = getTermService();
@@ -43,15 +44,15 @@ public final class RunScript extends RemoteInterface {
         Intent myIntent = getIntent();
         String action = myIntent.getAction();
         if (action.equals(ACTION_RUN_SCRIPT)) {
-            Log.d("ACTION_RUN_SCRIPT","ACTION_RUN_SCRIPT");
+            Log.d("ACTION_RUN_SCRIPT", "ACTION_RUN_SCRIPT");
             /* Someone with the appropriate permissions has asked us to
                run a script */
             String handle = myIntent.getStringExtra(EXTRA_WINDOW_HANDLE);
             String command;
             // If Intent.data not used then fall back to old method.
 
-            command=myIntent.getStringExtra(EXTRA_INITIAL_COMMAND);
-            Log.d("ACTION_RUN_SCRIPT::CMD",command);
+            command = myIntent.getStringExtra(EXTRA_INITIAL_COMMAND);
+            Log.d("ACTION_RUN_SCRIPT::CMD", command);
 
             if (handle != null) {
                 // Target the request at an existing window if open

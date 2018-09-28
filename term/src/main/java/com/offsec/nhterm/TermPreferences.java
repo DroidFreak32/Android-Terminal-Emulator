@@ -16,16 +16,15 @@
 
 package com.offsec.nhterm;
 
-import com.offsec.nhterm.R;
-
-import com.offsec.nhterm.compat.ActionBarCompat;
-import com.offsec.nhterm.compat.ActivityCompat;
-import com.offsec.nhterm.compat.AndroidCompat;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.view.MenuItem;
+
+import com.offsec.nhterm.compat.ActionBarCompat;
+import com.offsec.nhterm.compat.ActivityCompat;
+import com.offsec.nhterm.compat.AndroidCompat;
 
 public class TermPreferences extends PreferenceActivity {
     private static final String ACTIONBAR_KEY = "actionbar";
@@ -41,11 +40,11 @@ public class TermPreferences extends PreferenceActivity {
         // Remove the action bar pref on older platforms without an action bar
         if (AndroidCompat.SDK < 11) {
             Preference actionBarPref = findPreference(ACTIONBAR_KEY);
-             PreferenceCategory screenCategory =
+            PreferenceCategory screenCategory =
                     (PreferenceCategory) findPreference(CATEGORY_SCREEN_KEY);
-             if ((actionBarPref != null) && (screenCategory != null)) {
-                 screenCategory.removePreference(actionBarPref);
-             }
+            if ((actionBarPref != null) && (screenCategory != null)) {
+                screenCategory.removePreference(actionBarPref);
+            }
         }
 
         // Display up indicator on action bar home button
@@ -60,12 +59,12 @@ public class TermPreferences extends PreferenceActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case ActionBarCompat.ID_HOME:
-            // Action bar home button selected
-            finish();
-            return true;
-        default:
-            return super.onOptionsItemSelected(item);
+            case ActionBarCompat.ID_HOME:
+                // Action bar home button selected
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

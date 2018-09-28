@@ -24,7 +24,9 @@ import android.util.Log;
 import com.offsec.nhterm.compat.FileCompat;
 import com.offsec.nhterm.util.TermSettings;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -33,20 +35,19 @@ import java.util.ArrayList;
  * upon stopping.
  */
 public class ShellTermSession extends GenericTermSession {
+    private static final int PROCESS_EXITED = 1;
     private int mProcId;
     private Thread mWatcherThread;
-
     private String mInitialCommand;
-    private static final int PROCESS_EXITED = 1;
     private Handler mMsgHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             if (!isRunning()) {
-                Log.d("norunning EXIT","???");
+                Log.d("norunning EXIT", "???");
                 return;
             }
             if (msg.what == PROCESS_EXITED) {
-                Log.d("noning SI EXIT","???");
+                Log.d("noning SI EXIT", "???");
                 onProcessExit((Integer) msg.obj);
             }
         }
@@ -73,7 +74,7 @@ public class ShellTermSession extends GenericTermSession {
             }
         };
         mWatcherThread.setName("Process watcher");
-        Log.d("STS: ^^", mInitialShell + " cmd: " +  mInitialCommand);
+        Log.d("STS: ^^", mInitialShell + " cmd: " + mInitialCommand);
     }
 
     private void initializeSession(String mShell) throws IOException {
@@ -100,7 +101,7 @@ public class ShellTermSession extends GenericTermSession {
         env[0] = "TERM=" + settings.getTermType();
         env[1] = "PATH=" + path + ":/data/data/com.offsec.nethunter/files/scripts/";
         env[2] = "HOME=" + settings.getHomePath();
-       // Log.d("Initialize Sess", settings.getShell());
+        // Log.d("Initialize Sess", settings.getShell());
         mProcId = createSubprocess(mShell, env);
     }
 
@@ -114,7 +115,7 @@ public class ShellTermSession extends GenericTermSession {
                 checkedPath.append(":");
             }
         }
-        return checkedPath.substring(0, checkedPath.length()-1);
+        return checkedPath.substring(0, checkedPath.length() - 1);
     }
 
     @Override
@@ -176,7 +177,7 @@ public class ShellTermSession extends GenericTermSession {
             if (state == PLAIN) {
                 if (Character.isWhitespace(c)) {
                     result.add(builder.toString());
-                    builder.delete(0,builder.length());
+                    builder.delete(0, builder.length());
                     state = WHITESPACE;
                 } else if (c == '"') {
                     state = INQUOTE;
@@ -217,7 +218,7 @@ public class ShellTermSession extends GenericTermSession {
 
     @Override
     public void finish() {
-        Log.d("noning FINISH","???");
+        Log.d("noning FINISH", "???");
         hangupProcessGroup();
         super.finish();
     }

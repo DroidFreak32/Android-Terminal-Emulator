@@ -25,10 +25,10 @@
 
 extern "C" {
 JNIEXPORT jint JNICALL Java_com_offsec_nhterm_TermExec_createSubprocessInternal
-      (JNIEnv *, jclass, jstring, jobjectArray, jobjectArray, jint);
+        (JNIEnv *, jclass, jstring, jobjectArray, jobjectArray, jint);
 
-    JNIEXPORT jint JNICALL Java_com_offsec_nhterm_TermExec_waitFor
-      (JNIEnv *, jclass, jint);
+JNIEXPORT jint JNICALL Java_com_offsec_nhterm_TermExec_waitFor
+        (JNIEnv *, jclass, jint);
 }
 
-#endif	/* !defined(_JACKPAL_PROCESS_H) */
+#endif    /* !defined(_JACKPAL_PROCESS_H) */

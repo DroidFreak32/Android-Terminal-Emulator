@@ -1,63 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.offsec.nhterm"
-    android:versionName="1.0.1"
+    android:installLocation="auto"
     android:versionCode="1"
-    android:installLocation="auto">
-    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    android:versionName="1.0.1">
+
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <permission android:name="com.offsec.nhterm.permission.RUN_SCRIPT"
-        android:label="@string/perm_run_script"
+
+    <permission
+        android:name="com.offsec.nhterm.permission.RUN_SCRIPT"
         android:description="@string/permdesc_run_script"
+        android:label="@string/perm_run_script"
         android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
         android:protectionLevel="dangerous" />
-    <permission android:name="com.offsec.nhterm.permission.RUN_SCRIPT_NH_LOGIN"
-        android:label="@string/perm_run_script_nh"
+    <permission
+        android:name="com.offsec.nhterm.permission.RUN_SCRIPT_NH_LOGIN"
         android:description="@string/permdesc_run_script_nh"
-        android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
-        android:protectionLevel="dangerous" />
-    <permission android:name="com.offsec.nhterm.permission.RUN_SCRIPT_NH"
         android:label="@string/perm_run_script_nh"
-        android:description="@string/permdesc_run_script_nh"
         android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
         android:protectionLevel="dangerous" />
-    <permission android:name="com.offsec.nhterm.permission.RUN_SCRIPT_SU"
-        android:label="@string/perm_run_script_su"
+    <permission
+        android:name="com.offsec.nhterm.permission.RUN_SCRIPT_NH"
+        android:description="@string/permdesc_run_script_nh"
+        android:label="@string/perm_run_script_nh"
+        android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
+        android:protectionLevel="dangerous" />
+    <permission
+        android:name="com.offsec.nhterm.permission.RUN_SCRIPT_SU"
         android:description="@string/permdesc_run_script_su"
+        android:label="@string/perm_run_script_su"
         android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
         android:protectionLevel="dangerous" />
-    <permission android:name="com.offsec.nhterm.permission.APPEND_TO_PATH"
-        android:label="@string/perm_append_to_path"
+    <permission
+        android:name="com.offsec.nhterm.permission.APPEND_TO_PATH"
         android:description="@string/permdesc_append_to_path"
+        android:label="@string/perm_append_to_path"
         android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
         android:protectionLevel="dangerous" />
-    <permission android:name="com.offsec.nhterm.permission.PREPEND_TO_PATH"
-        android:label="@string/perm_prepend_to_path"
+    <permission
+        android:name="com.offsec.nhterm.permission.PREPEND_TO_PATH"
         android:description="@string/permdesc_prepend_to_path"
+        android:label="@string/perm_prepend_to_path"
         android:permissionGroup="android.permission-group.SYSTEM_TOOLS"
         android:protectionLevel="dangerous" />
-    <application android:icon="@mipmap/ic_launcher"
-        android:label="@string/application_terminal"
-        android:hardwareAccelerated="true"
+
+    <application
         android:allowBackup="false"
+        android:hardwareAccelerated="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/application_terminal"
         android:theme="@style/Theme">
-        <activity android:name="com.offsec.nhterm.Term"
-            android:launchMode="singleTask"
+        <activity
+            android:name="com.offsec.nhterm.Term"
             android:configChanges="keyboard|keyboardHidden|orientation"
+            android:launchMode="singleTask"
             android:windowSoftInputMode="adjustResize|stateAlwaysVisible">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
                 <category android:name="android.intent.category.MULTIWINDOW_LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity-alias android:name="TermInternal"
-            android:targetActivity="com.offsec.nhterm.Term"
-            android:exported="false">
+        <activity-alias
+            android:name="TermInternal"
+            android:exported="false"
+            android:targetActivity="com.offsec.nhterm.Term">
             <intent-filter>
                 <action android:name="com.offsec.nhterm.private.OPEN_NEW_WINDOW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -67,7 +83,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity-alias>
-        <activity android:name="com.offsec.nhterm.RemoteInterface"
+        <activity
+            android:name="com.offsec.nhterm.RemoteInterface"
             android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="com.offsec.nhterm.OPEN_NEW_WINDOW" />
@@ -76,17 +93,18 @@
         </activity>
         <activity-alias
             android:name="TermHere"
-            android:label="@string/activity_term_here_title"
-            android:targetActivity="com.offsec.nhterm.RemoteInterface"
             android:exported="true"
-            >
+            android:label="@string/activity_term_here_title"
+            android:targetActivity="com.offsec.nhterm.RemoteInterface">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <data android:mimeType="*/*" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity-alias>
-        <activity android:name="com.offsec.nhterm.RunScriptNetHunterLogin"
+
+        <activity
+            android:name="com.offsec.nhterm.RunScriptNetHunterLogin"
             android:excludeFromRecents="true"
             android:permission="com.offsec.nhterm.permission.RUN_SCRIPT_NH_LOGIN">
             <intent-filter>
@@ -94,7 +112,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="com.offsec.nhterm.RunScriptNetHunter"
+        <activity
+            android:name="com.offsec.nhterm.RunScriptNetHunter"
             android:excludeFromRecents="true"
             android:permission="com.offsec.nhterm.permission.RUN_SCRIPT_NH">
             <intent-filter>
@@ -102,7 +121,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="com.offsec.nhterm.RunScriptSu"
+        <activity
+            android:name="com.offsec.nhterm.RunScriptSu"
             android:excludeFromRecents="true"
             android:permission="com.offsec.nhterm.permission.RUN_SCRIPT_SU">
             <intent-filter>
@@ -110,7 +130,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="com.offsec.nhterm.RunScript"
+        <activity
+            android:name="com.offsec.nhterm.RunScript"
             android:excludeFromRecents="true"
             android:permission="com.offsec.nhterm.permission.RUN_SCRIPT">
             <intent-filter>
@@ -118,30 +139,34 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="com.offsec.nhterm.RunShortcut"
+        <activity
+            android:name="com.offsec.nhterm.RunShortcut"
             android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="com.offsec.nhterm.RUN_SHORTCUT" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name="com.offsec.nhterm.TermPreferences"
-            android:label="@string/preferences"/>
-        <activity android:name="com.offsec.nhterm.WindowList"
+        <activity
+            android:name="com.offsec.nhterm.TermPreferences"
+            android:label="@string/preferences" />
+        <activity
+            android:name="com.offsec.nhterm.WindowList"
             android:label="@string/window_list" />
-        <service android:name="com.offsec.nhterm.TermService" >
+
+        <service android:name="com.offsec.nhterm.TermService">
             <intent-filter>
-                <action android:name="com.offsec.nhterm.action.START_TERM.v1"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="com.offsec.nhterm.action.START_TERM.v1" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
+
         <activity
-            android:label="@string/activity_shortcut_create"
             android:name="com.offsec.nhterm.shortcuts.AddShortcut"
-            android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="orientation|keyboard|keyboardHidden"
-            >
+            android:label="@string/activity_shortcut_create"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -150,30 +175,31 @@
             </intent-filter>
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
-                <data     android:mimeType="text/*" />
+                <data android:mimeType="text/*" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.offsec.nhterm.shortcuts.FSNavigator"
-            android:label="@string/addshortcut_button_find_command"
-            android:launchMode="singleTop"
             android:configChanges="orientation|keyboardHidden"
             android:exported="true"
-            >
+            android:label="@string/addshortcut_button_find_command"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.PICK" />
-                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.GET_CONTENT" />
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.OPENABLE"/>
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.OPENABLE" />
+
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
+
         <meta-data
             android:name="com.sec.android.support.multiwindow"
-            android:value="true">
-        </meta-data>
+            android:value="true"></meta-data>
     </application>
 </manifest>

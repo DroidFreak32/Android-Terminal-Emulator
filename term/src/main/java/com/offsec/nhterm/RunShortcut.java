@@ -16,12 +16,12 @@
 
 package com.offsec.nhterm;
 
+import android.content.Intent;
+import android.util.Log;
+
 import com.offsec.nhterm.util.ShortcutEncryption;
 
 import java.security.GeneralSecurityException;
-
-import android.content.Intent;
-import android.util.Log;
 
 public final class RunShortcut extends RemoteInterface {
     public static final String ACTION_RUN_SHORTCUT = "com.offsec.nhterm.RUN_SHORTCUT";

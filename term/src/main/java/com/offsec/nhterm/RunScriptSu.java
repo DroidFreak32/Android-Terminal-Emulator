@@ -50,8 +50,8 @@ public final class RunScriptSu extends RemoteInterface {
             String command;
             // If Intent.data not used then fall back to old method.
 
-            command=myIntent.getStringExtra(EXTRA_INITIAL_COMMAND);
-            Log.d("RUN_SCRIPT_NH: CMD",command);
+            command = myIntent.getStringExtra(EXTRA_INITIAL_COMMAND);
+            Log.d("RUN_SCRIPT_NH: CMD", command);
 
             if (handle != null) {
                 // Target the request at an existing window if open

@@ -17,55 +17,45 @@
 package com.offsec.nhterm;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.*;
-import android.content.Intent;
+import android.os.Binder;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.ParcelFileDescriptor;
+import android.os.ResultReceiver;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.util.Log;
-import android.app.Notification;
-import android.support.v4.app.NotificationCompat;
-import android.app.PendingIntent;
-
-
-import com.offsec.nhterm.R;
-import com.offsec.nhterm.emulatorview.TermSession;
 
 import com.offsec.nhterm.compat.ServiceForegroundCompat;
-import com.offsec.nhterm.libtermexec.v1.*;
+import com.offsec.nhterm.emulatorview.TermSession;
+import com.offsec.nhterm.libtermexec.v1.ITerminal;
 import com.offsec.nhterm.util.SessionList;
 import com.offsec.nhterm.util.TermSettings;
 
 import java.util.UUID;
 
-public class TermService extends Service implements TermSession.FinishCallback
-{
+public class TermService extends Service implements TermSession.FinishCallback {
     /* Parallels the value of START_STICKY on API Level >= 5 */
     private static final int COMPAT_START_STICKY = 1;
-
-    private NotificationManager mNotificationManager;
-    private final int notifyID = 1;
-
     private static final int RUNNING_NOTIFICATION = 1;
-    private ServiceForegroundCompat compat;
-
-    private SessionList mTermSessions;
-
-    public class TSBinder extends Binder {
-        TermService getService() {
-            Log.i("TermService", "Activity binding to service");
-            return TermService.this;
-        }
-    }
+    private final int notifyID = 1;
     private final IBinder mTSBinder = new TSBinder();
+    private NotificationManager mNotificationManager;
+    private ServiceForegroundCompat compat;
+    private SessionList mTermSessions;
 
     @Override
     public void onStart(Intent intent, int flags) {
@@ -102,14 +92,14 @@ public class TermService extends Service implements TermSession.FinishCallback
         //compat = new ServiceForegroundCompat(this);
         mTermSessions = new SessionList();
 
-        mNotificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         // Building the notification
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_stat_service_notification_icon) // notification icon
                 .setContentTitle(getText(R.string.application_terminal)) // main title of the notification
                 .setContentText(getText(R.string.service_notify_text)); // notification text
-                //.setContentIntent(pendingIntent); // notification intent
+        //.setContentIntent(pendingIntent); // notification intent
 
         Intent notifyIntent = new Intent(this, Term.class);
 
@@ -162,6 +152,13 @@ public class TermService extends Service implements TermSession.FinishCallback
         mTermSessions.remove(session);
     }
 
+    public class TSBinder extends Binder {
+        TermService getService() {
+            Log.i("TermService", "Activity binding to service");
+            return TermService.this;
+        }
+    }
+
     private final class RBinder extends ITerminal.Stub {
         @Override
         public IntentSender startSession(final ParcelFileDescriptor pseudoTerminalMultiplexerFd,
@@ -183,7 +180,7 @@ public class TermService extends Service implements TermSession.FinishCallback
             if (pkgs == null || pkgs.length == 0)
                 return null;
 
-            for (String packageName:pkgs) {
+            for (String packageName : pkgs) {
                 try {
                     final PackageInfo pkgInfo = pm.getPackageInfo(packageName, 0);
 
@@ -225,7 +222,8 @@ public class TermService extends Service implements TermSession.FinishCallback
 
                         return result.getIntentSender();
                     }
-                } catch (PackageManager.NameNotFoundException ignore) {}
+                } catch (PackageManager.NameNotFoundException ignore) {
+                }
             }
 
             return null;

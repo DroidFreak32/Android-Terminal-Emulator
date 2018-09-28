@@ -16,12 +16,12 @@
 
 package com.offsec.nhterm.emulatorview;
 
-import java.util.Arrays;
-
 import android.graphics.Canvas;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.style.CharacterStyle;
+
+import java.util.Arrays;
 
 /**
  * A TranscriptScreen is a screen that remembers data that's been scrolled. The
@@ -30,32 +30,37 @@ import android.text.style.CharacterStyle;
  * expose its internal data structures.
  */
 class TranscriptScreen implements Screen {
+    private final static int IME_NONE = 0;
+    private final static int IME_UNDERLINE = 1;
+    private final static int IME_AUTODETECT = 2;
+    private final static int IME_ATOK = 3;
+    private final static int IME_GOOGLE = 4;
+    private final static int IME_DEFAULT = 100;
+    private static int mIMEColor = 1;
+    private static int mIMEDetect = IME_AUTODETECT;
     /**
      * The width of the transcript, in characters. Fixed at initialization.
      */
     private int mColumns;
-
     /**
      * The total number of rows in the transcript and the screen. Fixed at
      * initialization.
      */
     private int mTotalRows;
-
     /**
      * The number of rows in the screen.
      */
     private int mScreenRows;
-
     private UnicodeTranscript mData;
 
     /**
      * Create a transcript screen.
      *
-     * @param columns the width of the screen in characters.
-     * @param totalRows the height of the entire text area, in rows of text.
+     * @param columns    the width of the screen in characters.
+     * @param totalRows  the height of the entire text area, in rows of text.
      * @param screenRows the height of just the screen, not including the
-     *        transcript that holds lines that have scrolled off the top of the
-     *        screen.
+     *                   transcript that holds lines that have scrolled off the top of the
+     *                   screen.
      */
     public TranscriptScreen(int columns, int totalRows, int screenRows,
                             ColorScheme scheme) {
@@ -93,8 +98,8 @@ class TranscriptScreen implements Screen {
     /**
      * Store a Unicode code point into the screen at location (x, y)
      *
-     * @param x X coordinate (also known as column)
-     * @param y Y coordinate (also known as row)
+     * @param x         X coordinate (also known as column)
+     * @param y         Y coordinate (also known as row)
      * @param codePoint Unicode codepoint to store
      * @param foreColor the foreground color
      * @param backColor the background color
@@ -111,9 +116,9 @@ class TranscriptScreen implements Screen {
      * Scroll the screen down one line. To scroll the whole screen of a 24 line
      * screen, the arguments would be (0, 24).
      *
-     * @param topMargin First line that is scrolled.
+     * @param topMargin    First line that is scrolled.
      * @param bottomMargin One line after the last line that is scrolled.
-     * @param style the style for the newly exposed line.
+     * @param style        the style for the newly exposed line.
      */
     public void scroll(int topMargin, int bottomMargin, int style) {
         mData.scroll(topMargin, bottomMargin, style);
@@ -127,8 +132,8 @@ class TranscriptScreen implements Screen {
      *
      * @param sx source X coordinate
      * @param sy source Y coordinate
-     * @param w width
-     * @param h height
+     * @param w  width
+     * @param h  height
      * @param dx destination X coordinate
      * @param dy destination Y coordinate
      */
@@ -142,10 +147,10 @@ class TranscriptScreen implements Screen {
      * this is called with a "val" argument of 32 to clear a block of
      * characters.
      *
-     * @param sx source X
-     * @param sy source Y
-     * @param w width
-     * @param h height
+     * @param sx  source X
+     * @param sy  source Y
+     * @param w   width
+     * @param h   height
      * @param val value to set.
      */
     public void blockSet(int sx, int sy, int w, int h, int val,
@@ -156,15 +161,15 @@ class TranscriptScreen implements Screen {
     /**
      * Draw a row of text. Out-of-bounds rows are blank, not errors.
      *
-     * @param row The row of text to draw.
-     * @param canvas The canvas to draw to.
-     * @param x The x coordinate origin of the drawing
-     * @param y The y coordinate origin of the drawing
-     * @param renderer The renderer to use to draw the text
-     * @param cx the cursor X coordinate, -1 means don't draw it
-     * @param selx1 the text selection start X coordinate
-     * @param selx2 the text selection end X coordinate, if equals to selx1 don't draw selection
-     * @param imeText current IME text, to be rendered at cursor
+     * @param row        The row of text to draw.
+     * @param canvas     The canvas to draw to.
+     * @param x          The x coordinate origin of the drawing
+     * @param y          The y coordinate origin of the drawing
+     * @param renderer   The renderer to use to draw the text
+     * @param cx         the cursor X coordinate, -1 means don't draw it
+     * @param selx1      the text selection start X coordinate
+     * @param selx2      the text selection end X coordinate, if equals to selx1 don't draw selection
+     * @param imeText    current IME text, to be rendered at cursor
      * @param cursorMode the cursor mode. See TextRenderer.
      */
     public final void drawText(int row, Canvas canvas, float x, float y,
@@ -186,9 +191,9 @@ class TranscriptScreen implements Screen {
             // Line is blank.
             if (selx1 != selx2) {
                 // We need to draw a selection
-                char[] blank = new char[selx2-selx1];
+                char[] blank = new char[selx2 - selx1];
                 Arrays.fill(blank, ' ');
-                renderer.drawTextRun(canvas, x, y, selx1, selx2-selx1,
+                renderer.drawTextRun(canvas, x, y, selx1, selx2 - selx1,
                         blank, 0, 1, true, defaultStyle,
                         cx, 0, 1, 1, cursorMode);
             }
@@ -326,11 +331,11 @@ class TranscriptScreen implements Screen {
                     if (!(obj instanceof CharacterStyle)) {
                         continue;
                     }
-                    CharacterStyle style = (CharacterStyle)obj;
+                    CharacterStyle style = (CharacterStyle) obj;
                     style.updateDrawState(paint);
                     int bold = paint.isFakeBoldText() ? TextStyle.fxBold : 0;
-                    int underline = paint.isUnderlineText() ? TextStyle.fxUnderline: 0;
-                    int textStyle = bold+underline;
+                    int underline = paint.isUnderlineText() ? TextStyle.fxUnderline : 0;
+                    int textStyle = bold + underline;
 
                     int start = imeSpannableString.getSpanStart(style);
                     int end = imeSpannableString.getSpanEnd(style);
@@ -349,7 +354,7 @@ class TranscriptScreen implements Screen {
 
                     textStyle += TextStyle.fxIme;
                     renderer.setImePaint(paint);
-                    renderer.drawTextRun(canvas, x+ofsx, y, imePosition, uimeLength, imeSubText.toCharArray(),
+                    renderer.drawTextRun(canvas, x + ofsx, y, imePosition, uimeLength, imeSubText.toCharArray(),
                             uimeOffset, uimeLength, true, TextStyle.encode(0x0f, 0x00, textStyle),
                             -1, 0, 0, 0, 0);
                 }
@@ -357,14 +362,6 @@ class TranscriptScreen implements Screen {
         }
     }
 
-    private final static int IME_NONE       = 0;
-    private final static int IME_UNDERLINE  = 1;
-    private final static int IME_AUTODETECT = 2;
-    private final static int IME_ATOK       = 3;
-    private final static int IME_GOOGLE     = 4;
-    private final static int IME_DEFAULT    = 100;
-    private static int mIMEColor = 1;
-    private static int mIMEDetect = IME_AUTODETECT;
     public void setIMEColor(int mode) {
         mIMEColor = mode;
     }
@@ -391,7 +388,7 @@ class TranscriptScreen implements Screen {
                 if (!(obj instanceof CharacterStyle)) {
                     continue;
                 }
-                CharacterStyle style = (CharacterStyle)obj;
+                CharacterStyle style = (CharacterStyle) obj;
                 int start = composingText.getSpanStart(style);
                 int end = composingText.getSpanEnd(style);
                 if (start > 0) return start;
@@ -450,10 +447,10 @@ class TranscriptScreen implements Screen {
         for (int row = selY1; row <= selY2; row++) {
             int x1 = 0;
             int x2;
-            if ( row == selY1 ) {
+            if (row == selY1) {
                 x1 = selX1;
             }
-            if ( row == selY2 ) {
+            if (row == selY2) {
                 x2 = selX2 + 1;
                 if (x2 > columns) {
                     x2 = columns;
@@ -560,34 +557,28 @@ class TranscriptScreen implements Screen {
     }
 
     /**
-     *
      * Return the UnicodeTranscript line at this row index.
+     *
      * @param row The row index to be queried
      * @return The line of text at this row index
      */
-    char[] getScriptLine(int row)
-    {
-        try
-        {
+    char[] getScriptLine(int row) {
+        try {
             return mData.getLine(row);
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             return null;
-        }
-        catch (NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             return null;
         }
     }
 
     /**
      * Get the line wrap status of the row provided.
+     *
      * @param row The row to check for line-wrap status
      * @return The line wrap status of the row provided
      */
-    boolean getScriptLineWrap(int row)
-    {
+    boolean getScriptLineWrap(int row) {
         return mData.getLineWrap(row);
     }
 

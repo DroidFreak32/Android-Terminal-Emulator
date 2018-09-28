@@ -22,7 +22,6 @@ import android.util.DisplayMetrics;
 import com.offsec.nhterm.emulatorview.ColorScheme;
 import com.offsec.nhterm.emulatorview.EmulatorView;
 import com.offsec.nhterm.emulatorview.TermSession;
-
 import com.offsec.nhterm.util.TermSettings;
 
 public class TermView extends EmulatorView {

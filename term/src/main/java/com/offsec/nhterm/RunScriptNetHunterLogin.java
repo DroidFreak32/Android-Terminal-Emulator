@@ -50,8 +50,8 @@ public final class RunScriptNetHunterLogin extends RemoteInterface {
             String command;
             // If Intent.data not used then fall back to old method.
 
-            command=myIntent.getStringExtra(EXTRA_INITIAL_COMMAND);
-            Log.d("RUN_SCRIPT_NH: LGN",command);
+            command = myIntent.getStringExtra(EXTRA_INITIAL_COMMAND);
+            Log.d("RUN_SCRIPT_NH: LGN", command);
 
             if (handle != null) {
                 // Target the request at an existing window if open

@@ -1,41 +1,136 @@
 package com.offsec.nhterm.emulatorview;
 
-import com.offsec.nhterm.emulatorview.compat.AndroidCompat;
-import com.offsec.nhterm.emulatorview.compat.KeyCharacterMapCompat;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.HashMap;
-
 import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
-import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.*;
+
+import com.offsec.nhterm.emulatorview.compat.AndroidCompat;
+import com.offsec.nhterm.emulatorview.compat.KeyCharacterMapCompat;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_BREAK;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_CAPS_LOCK;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_CTRL_LEFT;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_CTRL_RIGHT;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_DEL;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_DPAD_CENTER;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_DPAD_DOWN;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_DPAD_LEFT;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_DPAD_RIGHT;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_DPAD_UP;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_ENTER;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_ESCAPE;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_F1;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_F10;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_F11;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_F12;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_F2;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_F3;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_F4;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_F5;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_F6;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_F7;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_F8;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_F9;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_FORWARD_DEL;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_FUNCTION;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_INSERT;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_MOVE_END;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_MOVE_HOME;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_0;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_1;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_2;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_3;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_4;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_5;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_6;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_7;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_8;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_9;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_ADD;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_COMMA;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_DIVIDE;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_DOT;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_ENTER;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_EQUALS;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_MULTIPLY;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUMPAD_SUBTRACT;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_NUM_LOCK;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_PAGE_DOWN;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_PAGE_UP;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_SPACE;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_SYSRQ;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.KEYCODE_TAB;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.META_ALT_ON;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.META_CTRL_MASK;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.META_CTRL_ON;
+import static com.offsec.nhterm.emulatorview.compat.KeycodeConstants.META_SHIFT_ON;
 
 /**
  * An ASCII key listener. Supports control characters and escape. Keeps track of
  * the current state of the alt, shift, fn, and control keys.
- *
  */
 class TermKeyListener {
+    // Map keycodes out of (above) the Unicode code point space.
+    static public final int KEYCODE_OFFSET = 0xA00000;
     private final static String TAG = "TermKeyListener";
     private static final boolean LOG_MISC = false;
     private static final boolean LOG_KEYS = false;
     private static final boolean LOG_COMBINING_ACCENT = false;
-
-    /** Disabled for now because it interferes with ALT processing on phones with physical keyboards. */
+    /**
+     * Disabled for now because it interferes with ALT processing on phones with physical keyboards.
+     */
     private final static boolean SUPPORT_8_BIT_META = false;
-
-    private static final int KEYMOD_ALT   = 0x80000000;
-    private static final int KEYMOD_CTRL  = 0x40000000;
+    private static final int KEYMOD_ALT = 0x80000000;
+    private static final int KEYMOD_CTRL = 0x40000000;
     private static final int KEYMOD_SHIFT = 0x20000000;
-    /** Means this maps raw scancode */
-    private static final int KEYMOD_SCAN  = 0x10000000;
-
+    /**
+     * Means this maps raw scancode
+     */
+    private static final int KEYMOD_SCAN = 0x10000000;
     private static Map<Integer, String> mKeyMap;
-
     private String[] mKeyCodes = new String[256];
     private String[] mAppKeyCodes = new String[256];
+    private boolean mCursorApplicationMode = true;
+    private ModifierKey mAltKey = new ModifierKey();
+    private ModifierKey mCapKey = new ModifierKey();
+    private ModifierKey mControlKey = new ModifierKey();
+    private ModifierKey mFnKey = new ModifierKey();
+    private int mCursorMode;
+    private boolean mHardwareControlKey;
+    private TermSession mTermSession;
+    private int mBackKeyCode;
+    private boolean mAltSendsEsc;
+    private int mCombiningAccent;
+    private boolean mThumbCtrl = false;
+    private boolean mJpYenRo = false;
+    private boolean mSwapESC2HZ = false;
+    private boolean mAltControlKey = false;
+
+    /**
+     * Construct a term key listener.
+     */
+    public TermKeyListener(TermSession termSession) {
+        mTermSession = termSession;
+        initKeyCodes();
+        updateCursorMode();
+    }
+
+    private static int getCursorModeHelper(ModifierKey key, int shift) {
+        return key.getUIMode() << shift;
+    }
+
+    static boolean isEventFromToggleDevice(KeyEvent event) {
+        if (AndroidCompat.SDK < 11) {
+            return true;
+        }
+        KeyCharacterMapCompat kcm = KeyCharacterMapCompat.wrap(
+                KeyCharacterMap.load(event.getDeviceId()));
+        return kcm.getModifierBehaviour() ==
+                KeyCharacterMapCompat.MODIFIER_BEHAVIOR_CHORDED_OR_TOGGLED;
+    }
 
     private void initKeyCodes() {
         mKeyMap = new HashMap<Integer, String>();
@@ -119,7 +214,7 @@ class TermKeyListener {
         // Home/End keys are set by setFnKeys()
         mKeyCodes[KEYCODE_PAGE_UP] = "\033[5~";
         mKeyCodes[KEYCODE_PAGE_DOWN] = "\033[6~";
-        mKeyCodes[KEYCODE_DEL]= "\177";
+        mKeyCodes[KEYCODE_DEL] = "\177";
         mKeyCodes[KEYCODE_NUM_LOCK] = "\033OP";
         mKeyCodes[KEYCODE_NUMPAD_DIVIDE] = "/";
         mKeyCodes[KEYCODE_NUMPAD_MULTIPLY] = "*";
@@ -180,7 +275,6 @@ class TermKeyListener {
         setCursorKeysApplicationMode(mCursorApplicationMode);
     }
 
-    private boolean mCursorApplicationMode = true;
     public void setCursorKeysApplicationMode(boolean val) {
         mCursorApplicationMode = val;
         if (LOG_MISC) {
@@ -199,138 +293,8 @@ class TermKeyListener {
         }
     }
 
-    /**
-     * The state engine for a modifier key. Can be pressed, released, locked,
-     * and so on.
-     *
-     */
-    private class ModifierKey {
-
-        private int mState;
-
-        private static final int UNPRESSED = 0;
-
-        private static final int PRESSED = 1;
-
-        private static final int RELEASED = 2;
-
-        private static final int USED = 3;
-
-        private static final int LOCKED = 4;
-
-        /**
-         * Construct a modifier key. UNPRESSED by default.
-         *
-         */
-        public ModifierKey() {
-            mState = UNPRESSED;
-        }
-
-        public void onPress() {
-            switch (mState) {
-                case PRESSED:
-                    // This is a repeat before use
-                    break;
-                case RELEASED:
-                    mState = LOCKED;
-                    break;
-                case USED:
-                    // This is a repeat after use
-                    break;
-                case LOCKED:
-                    mState = UNPRESSED;
-                    break;
-                default:
-                    mState = PRESSED;
-                    break;
-            }
-        }
-
-        public void onRelease() {
-            switch (mState) {
-                case USED:
-                    mState = UNPRESSED;
-                    break;
-                case PRESSED:
-                    mState = RELEASED;
-                    break;
-                default:
-                    // Leave state alone
-                    break;
-            }
-        }
-
-        public void adjustAfterKeypress() {
-            switch (mState) {
-                case PRESSED:
-                    mState = USED;
-                    break;
-                case RELEASED:
-                    mState = UNPRESSED;
-                    break;
-                default:
-                    // Leave state alone
-                    break;
-            }
-        }
-
-        public boolean isActive() {
-            return mState != UNPRESSED;
-        }
-
-        public int getUIMode() {
-            switch (mState) {
-                default:
-                case UNPRESSED:
-                    return TextRenderer.MODE_OFF;
-                case PRESSED:
-                case RELEASED:
-                case USED:
-                    return TextRenderer.MODE_ON;
-                case LOCKED:
-                    return TextRenderer.MODE_LOCKED;
-            }
-        }
-    }
-
-    private ModifierKey mAltKey = new ModifierKey();
-
-    private ModifierKey mCapKey = new ModifierKey();
-
-    private ModifierKey mControlKey = new ModifierKey();
-
-    private ModifierKey mFnKey = new ModifierKey();
-
-    private int mCursorMode;
-
-    private boolean mHardwareControlKey;
-
-    private TermSession mTermSession;
-
-    private int mBackKeyCode;
-    private boolean mAltSendsEsc;
-
-    private int mCombiningAccent;
-
-    // Map keycodes out of (above) the Unicode code point space.
-    static public final int KEYCODE_OFFSET = 0xA00000;
-
-    /**
-     * Construct a term key listener.
-     *
-     */
-    public TermKeyListener(TermSession termSession) {
-        mTermSession = termSession;
-        initKeyCodes();
-        updateCursorMode();
-    }
-
     public void setBackKeyCharacter(int code) {
         mBackKeyCode = code;
-    }
-
-    public void setAltSendsEsc(boolean flag) {
-        mAltSendsEsc = flag;
     }
 
     public void handleHardwareControlKey(boolean down) {
@@ -490,7 +454,7 @@ class TermKeyListener {
                 result = 28; // ^\
             } else if (result > '0' && result <= '9') {
                 // F1-F9
-                result = (char)(result + KEYCODE_OFFSET + KEYCODE_F1 - 1);
+                result = (char) (result + KEYCODE_OFFSET + KEYCODE_F1 - 1);
             } else if (result == '0') {
                 result = KEYCODE_OFFSET + KEYCODE_F10;
             } else if (result == 'i' || result == 'I') {
@@ -519,10 +483,9 @@ class TermKeyListener {
      * Handle a keyDown event.
      *
      * @param keyCode the keycode of the keyDown event
-     *
      */
     public void keyDown(int keyCode, KeyEvent event, boolean appMode,
-                        boolean allowToggle) throws IOException {
+                        boolean allowToggle) {
         if (LOG_KEYS) {
             Log.i(TAG, "keyDown(" + keyCode + "," + event + "," + appMode + "," + allowToggle + ")");
         }
@@ -581,7 +544,7 @@ class TermKeyListener {
                 }
                 if (effectiveAlt) {
                     if (mAltSendsEsc) {
-                        mTermSession.write(new byte[]{0x1b},0,1);
+                        mTermSession.write(new byte[]{0x1b}, 0, 1);
                         effectiveMetaState &= ~KeyEvent.META_ALT_MASK;
                     } else if (SUPPORT_8_BIT_META) {
                         setHighBit = true;
@@ -597,7 +560,7 @@ class TermKeyListener {
 
                 if ((metaState & KeyEvent.META_META_ON) != 0) {
                     if (mAltSendsEsc) {
-                        mTermSession.write(new byte[]{0x1b},0,1);
+                        mTermSession.write(new byte[]{0x1b}, 0, 1);
                         effectiveMetaState &= ~KeyEvent.META_META_MASK;
                     } else {
                         if (SUPPORT_8_BIT_META) {
@@ -655,37 +618,19 @@ class TermKeyListener {
                 | getCursorModeHelper(mFnKey, TextRenderer.MODE_FN_SHIFT);
     }
 
-    private static int getCursorModeHelper(ModifierKey key, int shift) {
-        return key.getUIMode() << shift;
-    }
-
-    static boolean isEventFromToggleDevice(KeyEvent event) {
-        if (AndroidCompat.SDK < 11) {
-            return true;
-        }
-        KeyCharacterMapCompat kcm = KeyCharacterMapCompat.wrap(
-                KeyCharacterMap.load(event.getDeviceId()));
-        return kcm.getModifierBehaviour() ==
-                KeyCharacterMapCompat.MODIFIER_BEHAVIOR_CHORDED_OR_TOGGLED;
-    }
-
-    private boolean mThumbCtrl = false;
     public void setThumbCtrl(boolean val) {
         mThumbCtrl = val;
     }
 
-    private boolean mJpYenRo = false;
     public void setJpYenRo(boolean val) {
         mJpYenRo = val;
     }
 
-    private boolean mSwapESC2HZ = false;
     public void setSwapESC2HZ(boolean val) {
         mSwapESC2HZ = val;
     }
 
-    private boolean mAltControlKey = false;
-    public boolean handleKeyCode(int keyCode, KeyEvent event, boolean appMode) throws IOException {
+    public boolean handleKeyCode(int keyCode, KeyEvent event, boolean appMode) {
         if (keyCode == 95 || keyCode == 211 || keyCode == 212) {
             // SWITCH_CHARSET, ZENKAKU_HANKAKU, EISU
             return true;
@@ -796,11 +741,102 @@ class TermKeyListener {
         return mAltSendsEsc;
     }
 
+    public void setAltSendsEsc(boolean flag) {
+        mAltSendsEsc = flag;
+    }
+
     public boolean isAltActive() {
         return mAltKey.isActive();
     }
 
     public boolean isCtrlActive() {
         return mControlKey.isActive();
+    }
+
+    /**
+     * The state engine for a modifier key. Can be pressed, released, locked,
+     * and so on.
+     */
+    private class ModifierKey {
+
+        private static final int UNPRESSED = 0;
+        private static final int PRESSED = 1;
+        private static final int RELEASED = 2;
+        private static final int USED = 3;
+        private static final int LOCKED = 4;
+        private int mState;
+
+        /**
+         * Construct a modifier key. UNPRESSED by default.
+         */
+        public ModifierKey() {
+            mState = UNPRESSED;
+        }
+
+        public void onPress() {
+            switch (mState) {
+                case PRESSED:
+                    // This is a repeat before use
+                    break;
+                case RELEASED:
+                    mState = LOCKED;
+                    break;
+                case USED:
+                    // This is a repeat after use
+                    break;
+                case LOCKED:
+                    mState = UNPRESSED;
+                    break;
+                default:
+                    mState = PRESSED;
+                    break;
+            }
+        }
+
+        public void onRelease() {
+            switch (mState) {
+                case USED:
+                    mState = UNPRESSED;
+                    break;
+                case PRESSED:
+                    mState = RELEASED;
+                    break;
+                default:
+                    // Leave state alone
+                    break;
+            }
+        }
+
+        public void adjustAfterKeypress() {
+            switch (mState) {
+                case PRESSED:
+                    mState = USED;
+                    break;
+                case RELEASED:
+                    mState = UNPRESSED;
+                    break;
+                default:
+                    // Leave state alone
+                    break;
+            }
+        }
+
+        public boolean isActive() {
+            return mState != UNPRESSED;
+        }
+
+        public int getUIMode() {
+            switch (mState) {
+                default:
+                case UNPRESSED:
+                    return TextRenderer.MODE_OFF;
+                case PRESSED:
+                case RELEASED:
+                case USED:
+                    return TextRenderer.MODE_ON;
+                case LOCKED:
+                    return TextRenderer.MODE_LOCKED;
+            }
+        }
     }
 }

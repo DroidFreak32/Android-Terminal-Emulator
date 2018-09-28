@@ -16,10 +16,6 @@
 
 package com.offsec.nhterm;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.UUID;
-
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -32,9 +28,12 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.offsec.nhterm.emulatorview.TermSession;
-
 import com.offsec.nhterm.util.SessionList;
 import com.offsec.nhterm.util.TermSettings;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.UUID;
 
 public class RemoteInterface extends Activity {
     protected static final String PRIVACT_OPEN_NEW_WINDOW = "com.offsec.nhterm.private.OPEN_NEW_WINDOW";
@@ -59,6 +58,25 @@ public class RemoteInterface extends Activity {
             mTermService = null;
         }
     };
+
+    /**
+     * Quote a string so it can be used as a parameter in bash and similar shells.
+     */
+    public static String quoteForBash(String s) {
+        StringBuilder builder = new StringBuilder();
+        String specialChars = "\"\\$`!";
+        builder.append('"');
+        int length = s.length();
+        for (int i = 0; i < length; i++) {
+            char c = s.charAt(i);
+            if (specialChars.indexOf(c) >= 0) {
+                builder.append('\\');
+            }
+            builder.append(c);
+        }
+        builder.append('"');
+        return builder.toString();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +130,7 @@ public class RemoteInterface extends Activity {
         String action = myIntent.getAction();
         if (action.equals(Intent.ACTION_SEND)
                 && myIntent.hasExtra(Intent.EXTRA_STREAM)) {
-          /* "permission.RUN_SCRIPT" not required as this is merely opening a new window. */
+            /* "permission.RUN_SCRIPT" not required as this is merely opening a new window. */
             Object extraStream = myIntent.getExtras().get(Intent.EXTRA_STREAM);
             if (extraStream instanceof Uri) {
                 String path = ((Uri) extraStream).getPath();
@@ -128,33 +146,14 @@ public class RemoteInterface extends Activity {
         finish();
     }
 
-    /**
-     *  Quote a string so it can be used as a parameter in bash and similar shells.
-     */
-    public static String quoteForBash(String s) {
-        StringBuilder builder = new StringBuilder();
-        String specialChars = "\"\\$`!";
-        builder.append('"');
-        int length = s.length();
-        for (int i = 0; i < length; i++) {
-            char c = s.charAt(i);
-            if (specialChars.indexOf(c) >= 0) {
-                builder.append('\\');
-            }
-            builder.append(c);
-        }
-        builder.append('"');
-        return builder.toString();
-    }
-
     protected String openNewWindow(String iInitialCommand, String mShell) {
-        Log.d("initialCommand",iInitialCommand);
+        Log.d("initialCommand", iInitialCommand);
         TermService service = getTermService();
         String initialCommand = mSettings.getInitialCommand();
 
         if (!iInitialCommand.equals("")) {
             if (!initialCommand.equals("")) {
-                Log.d("initialCommand",initialCommand);
+                Log.d("initialCommand", initialCommand);
                 initialCommand = iInitialCommand;
             } else {
                 initialCommand = iInitialCommand;

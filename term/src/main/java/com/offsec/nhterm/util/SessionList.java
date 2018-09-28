@@ -16,20 +16,19 @@
 
 package com.offsec.nhterm.util;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Collection;
-
 import com.offsec.nhterm.emulatorview.TermSession;
 import com.offsec.nhterm.emulatorview.UpdateCallback;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 
 /**
  * An ArrayList of TermSessions which allows users to register callbacks in
  * order to be notified when the list is changed.
  */
 @SuppressWarnings("serial")
-public class SessionList extends ArrayList<TermSession>
-{
+public class SessionList extends ArrayList<TermSession> {
     LinkedList<UpdateCallback> callbacks = new LinkedList<>();
     LinkedList<UpdateCallback> titleChangedListeners = new LinkedList<>();
     UpdateCallback mTitleChangedListener = new UpdateCallback() {
@@ -39,6 +38,7 @@ public class SessionList extends ArrayList<TermSession>
     };
     private Integer selected_session = 0;
     private Integer old_size = 0;
+
     public SessionList() {
         super();
     }
@@ -76,20 +76,25 @@ public class SessionList extends ArrayList<TermSession>
             listener.onUpdate();
         }
     }
-    public Boolean setSelectedSession(Integer session_id){
+
+    public Boolean setSelectedSession(Integer session_id) {
         selected_session = session_id;
         return true;
     }
-    public Integer getSelectedSession(){
+
+    public Integer getSelectedSession() {
         return selected_session;
     }
-    public Boolean setOldSize(Integer _size){
+
+    public Boolean setOldSize(Integer _size) {
         old_size = _size;
         return true;
     }
-    public Integer getOldSize(){
+
+    public Integer getOldSize() {
         return old_size;
     }
+
     @Override
     public boolean add(TermSession object) {
         boolean result = super.add(object);
@@ -106,7 +111,7 @@ public class SessionList extends ArrayList<TermSession>
     }
 
     @Override
-    public boolean addAll(Collection <? extends TermSession> collection) {
+    public boolean addAll(Collection<? extends TermSession> collection) {
         boolean result = super.addAll(collection);
         for (TermSession session : collection) {
             session.setTitleChangedListener(mTitleChangedListener);
@@ -116,7 +121,7 @@ public class SessionList extends ArrayList<TermSession>
     }
 
     @Override
-    public boolean addAll(int index, Collection <? extends TermSession> collection) {
+    public boolean addAll(int index, Collection<? extends TermSession> collection) {
         boolean result = super.addAll(index, collection);
         for (TermSession session : collection) {
             session.setTitleChangedListener(mTitleChangedListener);

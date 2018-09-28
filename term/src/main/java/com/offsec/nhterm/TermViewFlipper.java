@@ -16,10 +16,8 @@
 
 package com.offsec.nhterm;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.os.Handler;
@@ -28,59 +26,43 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
-import android.content.SharedPreferences;
 
-import com.offsec.nhterm.R;
+import com.offsec.nhterm.compat.AndroidCompat;
 import com.offsec.nhterm.emulatorview.EmulatorView;
 import com.offsec.nhterm.emulatorview.TermSession;
 import com.offsec.nhterm.emulatorview.UpdateCallback;
-
-import com.offsec.nhterm.compat.AndroidCompat;
 import com.offsec.nhterm.util.TermSettings;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+
 public class TermViewFlipper extends ViewFlipper implements Iterable<View> {
-    private Context context;
-    private Toast mToast;
-    private LinkedList<UpdateCallback> callbacks;
-    private boolean mStatusBarVisible = false;
-
-    private int mCurWidth;
-    private int mCurHeight;
-    private Rect mVisibleRect = new Rect();
-    private Rect mWindowRect = new Rect();
-    private LayoutParams mChildParams = null;
-    private boolean mRedoLayout = false;
-
+    private static final int SCREEN_CHECK_PERIOD = 1000;
     /**
      * True if we must poll to discover if the view has changed size.
      * This is the only known way to detect the view changing size due to
      * the IME being shown or hidden in API level <= 7.
      */
     private final boolean mbPollForWindowSizeChange = (AndroidCompat.SDK < 8);
-    private static final int SCREEN_CHECK_PERIOD = 1000;
     private final Handler mHandler = new Handler();
+    private Context context;
+    private Toast mToast;
+    private LinkedList<UpdateCallback> callbacks;
+    private boolean mStatusBarVisible = false;
+    private int mCurWidth;
+    private int mCurHeight;
+    private Rect mVisibleRect = new Rect();
+    private Rect mWindowRect = new Rect();
+    private LayoutParams mChildParams = null;
+    private boolean mRedoLayout = false;
+    private int mFunctionBarSize = 0;
+    private boolean mFunctionBar = true;
     private Runnable mCheckSize = new Runnable() {
-            public void run() {
-                adjustChildSize();
-                mHandler.postDelayed(this, SCREEN_CHECK_PERIOD);
-            }
-        };
-
-    class ViewFlipperIterator implements Iterator<View> {
-        int pos = 0;
-
-        public boolean hasNext() {
-            return (pos < getChildCount());
+        public void run() {
+            adjustChildSize();
+            mHandler.postDelayed(this, SCREEN_CHECK_PERIOD);
         }
-
-        public View next() {
-            return getChildAt(pos++);
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
+    };
 
     public TermViewFlipper(Context context) {
         super(context);
@@ -99,7 +81,7 @@ public class TermViewFlipper extends ViewFlipper implements Iterable<View> {
         updateVisibleRect();
         Rect visible = mVisibleRect;
         mChildParams = new LayoutParams(visible.width(), visible.height(),
-            Gravity.TOP|Gravity.LEFT);
+                Gravity.TOP | Gravity.LEFT);
         mFunctionBarSize = getDevInt(context, "functinbar_size", mFunctionBarSize);
     }
 
@@ -173,7 +155,7 @@ public class TermViewFlipper extends ViewFlipper implements Iterable<View> {
             return;
         }
 
-        String title = context.getString(R.string.window_title,getDisplayedChild()+1);
+        String title = context.getString(R.string.window_title, getDisplayedChild() + 1);
         if (session instanceof GenericTermSession) {
             title = ((GenericTermSession) session).getTitle(title);
         }
@@ -306,11 +288,10 @@ public class TermViewFlipper extends ViewFlipper implements Iterable<View> {
         super.onDraw(canvas);
     }
 
-    private int mFunctionBarSize = 0;
-    private boolean mFunctionBar = true;
     public void setFunctionBarSize(int size) {
         if (size > 0) {
-            if (getDevInt(context, "functinbar_size", mFunctionBarSize) != size) setDevInt(context, "functinbar_size", size);
+            if (getDevInt(context, "functinbar_size", mFunctionBarSize) != size)
+                setDevInt(context, "functinbar_size", size);
             mFunctionBarSize = size;
         }
     }
@@ -332,5 +313,21 @@ public class TermViewFlipper extends ViewFlipper implements Iterable<View> {
     public int getDevInt(Context context, String key, int defValue) {
         SharedPreferences pref = context.getSharedPreferences("dev", Context.MODE_PRIVATE);
         return pref.getInt(key, defValue);
+    }
+
+    class ViewFlipperIterator implements Iterator<View> {
+        int pos = 0;
+
+        public boolean hasNext() {
+            return (pos < getChildCount());
+        }
+
+        public View next() {
+            return getChildAt(pos++);
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 }
